@@ -2,19 +2,16 @@ from flask import request, jsonify
 
 from main import app, db
 from models.user_models import User
-from serializers.user_serializers import users_schema
+from serializers.user_serializers import users_schema, user_schema
 
 
 @app.route('/user', methods=["POST"])
 def user_post():
     data = request.json
-    first_name = data["first_name"]
-    last_name = data["last_name"]
-    email = data["email"]
-    user = User(first_name, last_name, email)
-    db.session.add(user)
+    user_object = user_schema.load(data)
+    db.session.add(user_object)
     db.session.commit()
-    return str(user.id)
+    return jsonify(user_schema.dump(user_object))
 
 
 @app.route('/users', methods=["GET"])
