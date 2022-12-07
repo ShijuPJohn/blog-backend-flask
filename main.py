@@ -3,6 +3,7 @@ import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
+
 from config import getconn
 
 app = Flask(__name__)
@@ -14,7 +15,8 @@ app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
 db = SQLAlchemy(app)
 db.init_app(app)
 app.app_context().push()
-from controllers.post_controllers import *
+from controllers.articles_controllers import *
+from controllers.user_controllers import *
 db.create_all()
 
 if __name__ == "__main__":
