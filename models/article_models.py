@@ -1,0 +1,35 @@
+import datetime
+
+from main import db
+from models.user_models import User
+
+
+class Category(db.Model):
+    __tablename__ = "category"
+    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    name = db.Column(db.String, nullable=False)
+
+    def __init__(self, name):
+        self.name = name
+
+    def __str__(self):
+        return "Category with name : ", str(self.name)
+
+
+class Article(db.Model):
+    __tablename__ = "article"
+    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    title = db.Column(db.String, nullable=False)
+    post = db.Column(db.Text, nullable=False)
+    author = db.Column(db.ForeignKey(User.id), nullable=False)
+    category = db.Column(db.ForeignKey(Category.id), nullable=False)
+    approved_by = db.Column(db.ForeignKey(User.id), defalult=author, nullable=True)
+    created_time = db.Column(db.DateTime, nullable=False, default=datetime.datetime.now())
+
+    def __init__(self, title, post, author):
+        self.title = title
+        self.post = post
+        self.author = author
+
+    def __str__(self):
+        return "Article with title : ", str(self.title) + ". Created at : " + self.created_time
