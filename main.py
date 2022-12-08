@@ -10,10 +10,12 @@ app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql+pg8000://"
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
     "creator": getconn
 }
-
-db = SQLAlchemy(app)
-db.init_app(app)
+with app.app_context():
+    db = SQLAlchemy(app)
+    db.init_app(app)
 app.app_context().push()
+
+
 from controllers.user_controllers import *
 from controllers.articles_controllers import *
 
