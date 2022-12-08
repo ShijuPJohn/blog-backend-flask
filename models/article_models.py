@@ -13,7 +13,7 @@ class Category(db.Model):
         self.name = name
 
     def __str__(self):
-        return "Category with name : ", str(self.name)
+        return "Category with name : " + self.name
 
 
 class Article(db.Model):
@@ -23,13 +23,8 @@ class Article(db.Model):
     post = db.Column(db.Text, nullable=False)
     author = db.Column(db.ForeignKey(User.id), nullable=False)
     category = db.Column(db.ForeignKey(Category.id), nullable=False)
-    approved_by = db.Column(db.ForeignKey(User.id), defalult=author, nullable=True)
+    approved_by = db.Column(db.ForeignKey(User.id), nullable=True)
     created_time = db.Column(db.DateTime, nullable=False, default=datetime.datetime.now())
-
-    def __init__(self, title, post, author):
-        self.title = title
-        self.post = post
-        self.author = author
 
     def __str__(self):
         return "Article with title : ", str(self.title) + ". Created at : " + self.created_time

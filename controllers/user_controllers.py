@@ -1,6 +1,6 @@
-from flask import request, jsonify
+from flask import request, jsonify, current_app as app
 
-from main import app, db
+from main import db
 from models.user_models import User
 from serializers.user_serializers import users_schema, user_schema
 
@@ -9,6 +9,8 @@ from serializers.user_serializers import users_schema, user_schema
 def user_post():
     data = request.json
     user_object = user_schema.load(data)
+    print(user_object)
+    print(type(user_object))
     db.session.add(user_object)
     db.session.commit()
     return jsonify(user_schema.dump(user_object))
