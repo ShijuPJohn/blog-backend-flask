@@ -10,8 +10,6 @@ with app.app_context():
 def user_post():
     data = request.json
     user_object = user_schema.load(data)
-    print(user_object)
-    print(type(user_object))
     db.session.add(user_object)
     db.session.commit()
     return jsonify(user_schema.dump(user_object))
