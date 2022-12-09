@@ -15,7 +15,7 @@ with app.app_context():
     db = SQLAlchemy(app)
     db.init_app(app)
 app.app_context().push()
-db.create_all()
+# db.create_all()
 from controllers.user_controllers import *
 from controllers.articles_controllers import *
 if __name__ == "__main__":
