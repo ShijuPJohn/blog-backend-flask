@@ -1,13 +1,12 @@
 import datetime
 
-from flask import current_app as app
-from flask_sqlalchemy import SQLAlchemy
+import flask
 
 # with app.app_context():
 #     db = SQLAlchemy(app)
 from main import db
 
-
+print("Has context in", __name__, flask.has_app_context())
 class User(db.Model):
     __tablename__ = "user"
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
