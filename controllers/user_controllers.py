@@ -1,9 +1,12 @@
-from flask import request, jsonify, current_app as app
-from flask_sqlalchemy import SQLAlchemy
+from flask import request, current_app as app
+
+from main import db
 from models.user_models import User
 from serializers.user_serializers import users_schema, user_schema
-with app.app_context():
-    db = SQLAlchemy(app)
+
+
+# with app.app_context():
+#     db = SQLAlchemy(app)
 
 
 @app.route('/user', methods=["POST"])
