@@ -5,7 +5,8 @@ from models.article_models import Article
 from serializers.article_serializers import article_schema, category_schema
 
 
-db = SQLAlchemy(app)
+with app.app_context():
+    db = SQLAlchemy(app)
 
 
 @app.route("/article", methods=["POST"])

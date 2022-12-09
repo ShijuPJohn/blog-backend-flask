@@ -14,8 +14,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 db.init_app(app)
 app.app_context().push()
-# from models.user_models import *
-# from models.article_models import *
 db.create_all()
 from controllers.user_controllers import *
 from controllers.articles_controllers import *
