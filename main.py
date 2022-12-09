@@ -11,8 +11,9 @@ app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
     "creator": getconn
 }
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
-db.init_app(app)
+with app.app_context():
+    db = SQLAlchemy(app)
+    db.init_app(app)
 app.app_context().push()
 db.create_all()
 from controllers.user_controllers import *
