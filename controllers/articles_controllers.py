@@ -1,9 +1,9 @@
+import flask
 from flask import current_app as app, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 
 from models.article_models import Article
 from serializers.article_serializers import article_schema, category_schema
-
 
 with app.app_context():
     db = SQLAlchemy(app)
@@ -11,6 +11,7 @@ with app.app_context():
 
 @app.route("/article", methods=["POST"])
 def article_post():
+    print(flask.has_app_context())
     data = request.json
     art_object = article_schema.load(data)
     db.session.add(art_object)

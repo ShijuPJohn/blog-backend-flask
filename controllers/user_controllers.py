@@ -1,3 +1,4 @@
+import flask
 from flask import request, current_app as app
 
 from main import db
@@ -11,6 +12,7 @@ from serializers.user_serializers import users_schema, user_schema
 
 @app.route('/user', methods=["POST"])
 def user_post():
+    print("Has context in", __name__, flask.has_app_context())
     data = request.json
     user_object = user_schema.load(data)
     db.session.add(user_object)
@@ -20,5 +22,6 @@ def user_post():
 
 @app.route('/users', methods=["GET"])
 def users_get():
+    print("Has context in", __name__, flask.has_app_context())
     users = User.query.all()
     return users_schema.dump(users)
