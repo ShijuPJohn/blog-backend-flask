@@ -21,5 +21,4 @@ def user_post():
 @app.route('/users', methods=["GET"])
 def users_get():
     users = User.query.all()
-    results = users_schema.dump(users)
-    return results
+    return users_schema.dump(users)
