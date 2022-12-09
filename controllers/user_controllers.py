@@ -12,11 +12,11 @@ def user_post():
     user_object = user_schema.load(data)
     db.session.add(user_object)
     db.session.commit()
-    return jsonify(user_schema.dump(user_object))
+    return user_schema.dump(user_object)
 
 
 @app.route('/users', methods=["GET"])
 def users_get():
     users = User.query.all()
     results = users_schema.dump(users)
-    return jsonify(results)
+    return results

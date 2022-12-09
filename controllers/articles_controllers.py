@@ -15,14 +15,14 @@ def article_post():
     art_object = article_schema.load(data)
     db.session.add(art_object)
     db.session.commit()
-    return jsonify(article_schema.dump(art_object))
+    return article_schema.dump(art_object)
 
 
 @app.route("/article/<art_id>", methods=["GET"])
 def article_get(art_id):
-    article = Article.query.filter(Article.id == art_id).first()
+    article = Article.query.filter(Article.id == int(art_id)).first()
     article_json = article_schema.dump(article)
-    return jsonify(article_json)
+    return article_json
 
 
 @app.route("/category", methods=["POST"])
@@ -31,4 +31,4 @@ def category_post():
     category_object = category_schema.load(data)
     db.session.add(category_object)
     db.session.commit()
-    return jsonify(category_schema.dump(category_object))
+    return category_schema.dump(category_object)

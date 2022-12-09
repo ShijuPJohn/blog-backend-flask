@@ -15,6 +15,6 @@ db = SQLAlchemy(app)
 db.init_app(app)
 app.app_context().push()
 from controllers.user_controllers import *
-# from controllers.articles_controllers import *
+from controllers.articles_controllers import *
 if __name__ == "__main__":
     app.run(debug=True if os.environ.get("ENV") == "DEVELOPMENT" else False, port=int(os.environ.get("PORT", 8080)))
