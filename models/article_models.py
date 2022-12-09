@@ -5,7 +5,8 @@ from flask_sqlalchemy import SQLAlchemy
 
 from models.user_models import User
 
-db = SQLAlchemy(app)
+with app.app_context():
+    db = SQLAlchemy(app)
 
 
 class Category(db.Model):
