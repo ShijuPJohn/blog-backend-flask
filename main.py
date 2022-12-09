@@ -6,12 +6,12 @@ from flask_sqlalchemy import SQLAlchemy
 from config import getconn
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql+pg8000://"
-app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
-    "creator": getconn
-}
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 with app.app_context():
+    app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql+pg8000://"
+    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+        "creator": getconn
+    }
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db = SQLAlchemy(app)
     db.init_app(app)
 app.app_context().push()
