@@ -1,8 +1,11 @@
 from flask import current_app as app, request, jsonify
+from flask_sqlalchemy import SQLAlchemy
 
-from main import db
 from models.article_models import Article
 from serializers.article_serializers import article_schema, category_schema
+
+
+db = SQLAlchemy(app)
 
 
 @app.route("/article", methods=["POST"])

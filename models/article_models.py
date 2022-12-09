@@ -1,7 +1,11 @@
 import datetime
 
-from main import db
+from flask import current_app as app
+from flask_sqlalchemy import SQLAlchemy
+
 from models.user_models import User
+
+db = SQLAlchemy(app)
 
 
 class Category(db.Model):
