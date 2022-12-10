@@ -18,4 +18,5 @@ db.init_app(app)
 from controllers.user_controllers import *
 # from controllers.articles_controllers import *
 if __name__ == "__main__":
-    app.run(debug=True if os.environ.get("ENV") == "DEVELOPMENT" else False, port=int(os.environ.get("PORT", 8080)))
+    with app.app_context():
+        app.run(debug=True if os.environ.get("ENV") == "DEVELOPMENT" else False, port=int(os.environ.get("PORT", 8080)))
