@@ -20,4 +20,4 @@ from controllers.user_controllers import *
 # from controllers.articles_controllers import *
 if __name__ == "__main__":
     with app.app_context():
-        app.run(port=int(os.environ.get("PORT", 8080)))
+        app.run(port=8080)
