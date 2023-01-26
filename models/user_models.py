@@ -3,7 +3,6 @@ import datetime
 from flask_sqlalchemy import SQLAlchemy
 from flask import current_app as app
 
-# with app.app_context():
 db = SQLAlchemy(app)
 
 
