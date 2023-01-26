@@ -1,15 +1,22 @@
-import marshmallow as ma
-from marshmallow import post_load, fields, validate, Schema
+from flask_marshmallow import Marshmallow
+from marshmallow import post_load, Schema
 
+from main import app
 from models.user_models import User
+
+ma = Marshmallow(app)
 
 
 class UserSchema(Schema):
-    id = fields.Int()
-    first_name = fields.Str(required=True, validate=validate.Length(min=1, max=64))
-    last_name = fields.Str(validate=validate.Length(max=64))
-    email = fields.Email(required=True)
-    created_time = fields.DateTime()
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'created_time']
+
+
+class UserSignupSchema(Schema):
+    class Meta:
+        model = User
+        fields = [ 'username', 'email']
 
     @post_load
     def make_user(self, data, **kwargs):
@@ -18,3 +25,4 @@ class UserSchema(Schema):
 
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
+user_signup_schema = UserSignupSchema()

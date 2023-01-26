@@ -5,8 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 from models.user_models import User
 
-with app.app_context():
-    db = SQLAlchemy(app)
+db = SQLAlchemy(app)
 
 
 class Category(db.Model):
@@ -32,4 +31,4 @@ class Article(db.Model):
     created_time = db.Column(db.DateTime, nullable=False, default=datetime.datetime.now())
 
     def __str__(self):
-        return "Article with title : ", str(self.title) + ". Created at : " + self.created_time
+        return self.title
