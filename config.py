@@ -7,7 +7,7 @@ if os.environ["ENV"] == "PRODUCTION":
     client = secretmanager.SecretManagerServiceClient()
     db_pass_res = "projects/1037996227658/secrets/db_pass/versions/1"
     db_user_res = "projects/1037996227658/secrets/db_user/versions/1"
-    db_dbname_res = "projects/1037996227658/secrets/db_dbname/versions/1"
+    db_dbname_res = "projects/1037996227658/secrets/db_dbname/versions/2"
     db_connection_name_res = "projects/1037996227658/secrets/db_connection_name/versions/1"
     app_secret_res = "projects/1037996227658/secrets/app_secret_value/versions/1"
     db_password = client.access_secret_version(request={"name": db_pass_res}).payload.data.decode("UTF-8")
