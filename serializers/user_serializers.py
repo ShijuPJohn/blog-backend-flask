@@ -1,10 +1,8 @@
 from flask_marshmallow import Marshmallow
 from marshmallow import post_load, Schema
-
-from main import app
 from models.user_models import User
 
-ma = Marshmallow(app)
+ma = Marshmallow()
 
 
 class UserSchema(Schema):
