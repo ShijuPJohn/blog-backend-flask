@@ -2,7 +2,7 @@ import flask
 from flask import current_app as app, request
 from flask_sqlalchemy import SQLAlchemy
 
-from models.article_models import Article
+from models.models import Article
 from serializers.article_serializers import article_schema, category_schema
 
 db = SQLAlchemy(app)

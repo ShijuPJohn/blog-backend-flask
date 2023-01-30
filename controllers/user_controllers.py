@@ -1,6 +1,6 @@
 from flask import request, Blueprint
 from flask_sqlalchemy import SQLAlchemy
-from models.user_models import User
+from models.models import User
 from serializers.user_serializers import users_schema, user_schema, user_signup_schema
 
 db = SQLAlchemy()

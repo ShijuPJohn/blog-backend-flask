@@ -1,10 +1,10 @@
 import os
 
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 
 from config import getconn
 from controllers.user_controllers import user_controllers
+from models.models import db
 
 app = Flask(__name__)
 app.register_blueprint(user_controllers)
@@ -15,7 +15,6 @@ app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
     "creator": getconn
 }
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
 db.init_app(app)
 
 db.create_all()

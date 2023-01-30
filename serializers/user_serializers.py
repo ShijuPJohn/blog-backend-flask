@@ -1,6 +1,6 @@
 from flask_marshmallow import Marshmallow
 from marshmallow import post_load, Schema
-from models.user_models import User
+from models.models import User
 
 ma = Marshmallow()
 

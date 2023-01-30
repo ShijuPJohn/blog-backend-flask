@@ -1,6 +1,6 @@
 from marshmallow import Schema, fields, post_load
 
-from models.article_models import Article, Category
+from models.models import Article, Category
 from serializers.user_serializers import UserSchema
 
 
