@@ -21,12 +21,13 @@ comment_likes = db.Table("comment_likes",
 post_categories = db.Table("post_categories",
                            db.Column("post_id", db.Integer, db.ForeignKey("post.id")),
                            db.Column("category_id", db.Integer, db.ForeignKey("category.id"))
-                           )#TODO
+                           )
 
 post_authors = db.Table("post_authors",
-                           db.Column("post_id", db.Integer, db.ForeignKey("user.id")),
-                           db.Column("category_id", db.Integer, db.ForeignKey("post.id"))
-                           )#TODO
+                        db.Column("post_id", db.Integer, db.ForeignKey("user.id")),
+                        db.Column("category_id", db.Integer, db.ForeignKey("post.id"))
+                        )
+
 
 class User(db.Model):
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
@@ -39,12 +40,12 @@ class User(db.Model):
                               primaryjoin=follows_followedby.c.user == id,
                               secondaryjoin=follows_followedby.c.follows == id,
                               backref="followers")
-    posts = db.relationship("Post", cascade="all,delete", backref="author", order_by='Post.time_created.desc()')  # TODO
-    categories = db.relationship("Category", cascade="all,delete", backref="author",
-                                 order_by='Post.time_created.desc()')  # TODO
-    comments = db.relationship("Comment", cascade="all,delete", backref="author")  # TODO
-    liked_posts = db.relationship("Post", secondary=post_likes, backref="liked_users")  # TODO
-    liked_comments = db.relationship("Comment", secondary=comment_likes, backref="liked_users")  # TODO
+    posts = db.relationship("Post", secondary=post_authors, backref="authors")
+    created_categories = db.relationship("Category", backref="created_by")
+    comments = db.relationship("Comment", cascade="all,delete", backref="author")
+    liked_posts = db.relationship("Post", secondary=post_likes, backref="liked_users")
+    liked_comments = db.relationship("Comment", secondary=comment_likes, backref="liked_users")
+    admin = db.Column(db.Boolean, default=False, nullable=False)
 
     def __init__(self, username, email, password):
         self.username = username
@@ -70,8 +71,9 @@ class Comment(db.Model):
 class Post(db.Model):
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     title = db.Column(db.String, nullable=False)
+    seo_slug = db.Column(db.String, nullable=True)
     description = db.Column(db.String, nullable=True)
-    cover_image = db.Column(db.String, nullable=True, default="static/uploads/post_thumbs/default_post.png")
+    cover_image = db.Column(db.String, nullable=True) #TODO default=??
     cover_video = db.Column(db.String, nullable=True)
     time_created = db.Column(DateTime(timezone=True), server_default=func.now())
     time_updated = db.Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.current_timestamp())
@@ -79,6 +81,7 @@ class Post(db.Model):
     comments = db.relationship("Comment", cascade="all,delete", backref="Post", order_by='Comment.time_created.desc()')
     archived = db.Column(db.Boolean, default=False, nullable=False)
     draft = db.Column(db.Boolean, default=False, nullable=False)
+    categories = db.relationship("Category", secondary=post_likes, backref="posts")
 
     def __str__(self):
         return "Post with title : " + self.title
@@ -88,7 +91,7 @@ class Category(db.Model):
     __tablename__ = "category"
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     name = db.Column(db.String, nullable=False)
-    author_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    author_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=True)
 
     def __init__(self, name):
         self.name = name
