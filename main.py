@@ -6,7 +6,7 @@ from config import getconn
 from controllers.user_controllers import user_controllers
 from models.models import db
 
-app = Flask(__name__)
+app = Flask(__name_
 app.register_blueprint(user_controllers)
 app.app_context().push()
 
