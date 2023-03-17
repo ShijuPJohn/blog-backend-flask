@@ -34,7 +34,8 @@ class User(db.Model):
     username = db.Column(db.String, unique=True)
     email = db.Column(db.String, unique=True)
     password = db.Column(db.String, unique=True)
-    profile_image = db.Column(db.String, nullable=True, default="static/uploads/user_thumbs/pro_img1.png")
+    admin = db.Column(db.Boolean, default=False, nullable=False)
+    profile_image = db.Column(db.String, nullable=True, default="")  # TODO default=?
     time_created = db.Column(DateTime(timezone=True), server_default=func.now())
     follows = db.relationship("User", secondary=follows_followedby,
                               primaryjoin=follows_followedby.c.user == id,
@@ -45,7 +46,6 @@ class User(db.Model):
     comments = db.relationship("Comment", cascade="all,delete", backref="author")
     liked_posts = db.relationship("Post", secondary=post_likes, backref="liked_users")
     liked_comments = db.relationship("Comment", secondary=comment_likes, backref="liked_users")
-    admin = db.Column(db.Boolean, default=False, nullable=False)
 
     def __init__(self, username, email, password):
         self.username = username
@@ -73,7 +73,7 @@ class Post(db.Model):
     title = db.Column(db.String, nullable=False)
     seo_slug = db.Column(db.String, nullable=True)
     description = db.Column(db.String, nullable=True)
-    cover_image = db.Column(db.String, nullable=True) #TODO default=??
+    cover_image = db.Column(db.String, nullable=True)  # TODO default=?
     cover_video = db.Column(db.String, nullable=True)
     time_created = db.Column(DateTime(timezone=True), server_default=func.now())
     time_updated = db.Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.current_timestamp())
@@ -81,7 +81,7 @@ class Post(db.Model):
     comments = db.relationship("Comment", cascade="all,delete", backref="Post", order_by='Comment.time_created.desc()')
     archived = db.Column(db.Boolean, default=False, nullable=False)
     draft = db.Column(db.Boolean, default=False, nullable=False)
-    categories = db.relationship("Category", secondary=post_likes, backref="posts")
+    categories = db.relationship("Category", secondary=post_categories, backref="posts")
 
     def __str__(self):
         return "Post with title : " + self.title
