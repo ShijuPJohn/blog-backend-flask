@@ -8,13 +8,13 @@ ma = Marshmallow()
 class UserSchema(ma.Schema):
     class Meta:
         model = User
-        fields = ("id", "username", "email", "imageUrl", "password")
+        fields = ("id", "username", "email", "profile_image", "password")
 
 
 class UserDisplaySchema(ma.Schema):
     class Meta:
         model = User
-        fields = ("id", "username", "email", "imageUrl")
+        fields = ("id", "username", "email", "profile_image", "admin")
 
 
 class UserSignupSchema(ma.Schema):
