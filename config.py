@@ -10,7 +10,7 @@ if os.environ["ENV"] == "PRODUCTION":
     secrets_res = "projects/1037996227658/secrets/blog_secrets/versions/4"
     secrets = client.access_secret_version(request={"name": secrets_res}).payload.data.decode("UTF-8")
     secrets_list = secrets.split()
-    url = secrets_list[0]
+    url = up.urlparse(secrets_list[0])
     secret_key = secrets_list[1]
 else:
     url = up.urlparse(os.environ["ELE_DATABASE_URL"])

@@ -6,16 +6,16 @@ from sqlalchemy import DateTime, func
 db = SQLAlchemy()
 
 follows_followedby = db.Table("follows_followedby",
-                              db.Column("user", db.Integer, db.ForeignKey("user.id")),
-                              db.Column("follows", db.Integer, db.ForeignKey("user.id"))
+                              db.Column("user", db.Integer, db.ForeignKey("user1.id")),
+                              db.Column("follows", db.Integer, db.ForeignKey("user1.id"))
                               )
 post_likes = db.Table("post_likes",
                       db.Column("post_id", db.Integer, db.ForeignKey("post.id")),
-                      db.Column("user_id", db.Integer, db.ForeignKey("user.id"))
+                      db.Column("user_id", db.Integer, db.ForeignKey("user1.id"))
                       )
 comment_likes = db.Table("comment_likes",
                          db.Column("post_id", db.Integer, db.ForeignKey("comment.id")),
-                         db.Column("user_id", db.Integer, db.ForeignKey("user.id"))
+                         db.Column("user_id", db.Integer, db.ForeignKey("user1.id"))
                          )
 
 post_categories = db.Table("post_categories",
@@ -24,12 +24,13 @@ post_categories = db.Table("post_categories",
                            )
 
 post_authors = db.Table("post_authors",
-                        db.Column("post_id", db.Integer, db.ForeignKey("user.id")),
+                        db.Column("post_id", db.Integer, db.ForeignKey("user1.id")),
                         db.Column("category_id", db.Integer, db.ForeignKey("post.id"))
                         )
 
 
 class User(db.Model):
+    __tablename__ = "user1"
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     username = db.Column(db.String, unique=True)
     email = db.Column(db.String, unique=True)
@@ -59,7 +60,7 @@ class User(db.Model):
 class Comment(db.Model):
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     comment = db.Column(db.String, nullable=False)
-    author_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    author_id = db.Column(db.Integer, db.ForeignKey("user1.id"), nullable=False)
     post_id = db.Column(db.Integer, db.ForeignKey("post.id"), nullable=False)
     time_created = db.Column(DateTime(timezone=True), server_default=func.now())
     time_updated = db.Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.current_timestamp())
@@ -77,7 +78,7 @@ class Post(db.Model):
     cover_video = db.Column(db.String, nullable=True)
     time_created = db.Column(DateTime(timezone=True), server_default=func.now())
     time_updated = db.Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.current_timestamp())
-    author_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    author_id = db.Column(db.Integer, db.ForeignKey("user1.id"), nullable=False)
     comments = db.relationship("Comment", cascade="all,delete", backref="Post", order_by='Comment.time_created.desc()')
     archived = db.Column(db.Boolean, default=False, nullable=False)
     draft = db.Column(db.Boolean, default=False, nullable=False)
@@ -91,7 +92,7 @@ class Category(db.Model):
     __tablename__ = "category"
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     name = db.Column(db.String, nullable=False)
-    author_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=True)
+    author_id = db.Column(db.Integer, db.ForeignKey("user1.id"), nullable=True)
 
     def __init__(self, name):
         self.name = name

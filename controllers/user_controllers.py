@@ -7,7 +7,7 @@ from marshmallow import ValidationError
 from werkzeug.security import generate_password_hash, check_password_hash
 
 import config
-from controllers.token_validator import validate_token
+# from controllers.token_validator import validate_token
 from models.models import User
 from serializers.user_serializers import users_display_schema, user_signup_schema, user_display_schema
 
@@ -17,8 +17,8 @@ user_controller = Blueprint('user_controller', __name__)
 
 
 @user_controller.route("/api/users", methods=["GET"])
-@validate_token
-def api_users_get(user_from_token):
+# @validate_token
+def api_users_get():
     try:
         users = User.query.all()
         return users_display_schema.dump(users), 200
@@ -37,18 +37,18 @@ def api_user_signup():
             user.password = hashed_password
             db.session.add(user)
             db.session.commit()
-            token = jwt.encode(
-                {"user_id": user.id,
-                 "exp": datetime.datetime.utcnow() + datetime.timedelta(days=30)},
-                config.secret_key
-            )
-            return {"user": user_display_schema.dump(user), "token": token}
+            # token = jwt.encode(
+            #     {"user_id": user.id,
+            #      "exp": datetime.datetime.utcnow() + datetime.timedelta(days=30)},
+            #     config.secret_key
+            # )
+            return {"user": user_display_schema.dump(user)}
+                # , "token": token}
     except ValidationError:
         return jsonify({"message": "bad_request"}), 400
     except Exception as e:
         print("Exception", e)
         return jsonify({"message": "internal_server_error"}), 500
-
 
 #
 # @app.route("/api/user", methods=["PUT"])
@@ -100,22 +100,22 @@ def api_user_signup():
 #         return jsonify({"message": "bad_request"}), 400
 #
 #
-@user_controller.route('/api/user/login', methods=["POST"])
-def api_user_login():
-    body_data = request.get_json()
-    if body_data["email"] and body_data["password"]:
-        email_from_request = body_data["email"]
-        password_from_request = body_data["password"]
-        user = User.query.filter(User.email == email_from_request).first()
-        if user and check_password_hash(user.password, password_from_request):
-            token = jwt.encode(
-                {"user_id": user.id,
-                 "exp": datetime.datetime.utcnow() + datetime.timedelta(days=30)},
-                config.secret_key
-            )
-            return jsonify({"message": "login_success", "token": token}), 200
-        return {"message": "invalid_credentials"}, 401
-    return {"message": "invalid_data"}, 400
+# @user_controller.route('/api/user/login', methods=["POST"])
+# def api_user_login():
+#     body_data = request.get_json()
+#     if body_data["email"] and body_data["password"]:
+#         email_from_request = body_data["email"]
+#         password_from_request = body_data["password"]
+#         user = User.query.filter(User.email == email_from_request).first()
+#         if user and check_password_hash(user.password, password_from_request):
+#             token = jwt.encode(
+#                 {"user_id": user.id,
+#                  "exp": datetime.datetime.utcnow() + datetime.timedelta(days=30)},
+#                 config.secret_key
+#             )
+#             return jsonify({"message": "login_success", "token": token}), 200
+#         return {"message": "invalid_credentials"}, 401
+#     return {"message": "invalid_data"}, 400
 #
 #
 # @app.route('/api/user/<uid>', methods=["GET"])
