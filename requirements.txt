@@ -55,3 +55,4 @@ SQLAlchemy==1.4.44
 urllib3==1.26.13
 Werkzeug==2.2.2
 yarl==1.8.2
+google-cloud-storage==2.7.0

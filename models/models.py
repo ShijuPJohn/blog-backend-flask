@@ -23,10 +23,6 @@ post_categories = db.Table("post_categories",
                            db.Column("category_id", db.Integer, db.ForeignKey("category.id"))
                            )
 
-post_authors = db.Table("post_authors",
-                        db.Column("post_id", db.Integer, db.ForeignKey("user1.id")),
-                        db.Column("category_id", db.Integer, db.ForeignKey("post.id"))
-                        )
 
 
 class User(db.Model):
@@ -42,7 +38,7 @@ class User(db.Model):
                               primaryjoin=follows_followedby.c.user == id,
                               secondaryjoin=follows_followedby.c.follows == id,
                               backref="followers")
-    posts = db.relationship("Post", secondary=post_authors, backref="authors")
+    posts = db.relationship("Post", backref="author")
     created_categories = db.relationship("Category", backref="created_by")
     comments = db.relationship("Comment", cascade="all,delete", backref="author")
     liked_posts = db.relationship("Post", secondary=post_likes, backref="liked_users")
@@ -93,9 +89,6 @@ class Category(db.Model):
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     name = db.Column(db.String, nullable=False)
     author_id = db.Column(db.Integer, db.ForeignKey("user1.id"), nullable=True)
-
-    def __init__(self, name):
-        self.name = name
 
     def __str__(self):
         return "Category with name : " + self.name
