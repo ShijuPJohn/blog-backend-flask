@@ -56,7 +56,7 @@ class PostDisplaySchema(ma.Schema):
         fields = ("title", "description", "author", "archived", "cover_image", "draft", "categories")
 
     author = fields.Nested(user_display_schema)
-    categories = fields.Nested(categories_schema)
+    categories = fields.Nested(categories_minimal_schema)
 
 
 class CategoryCreateSchema(ma.Schema):

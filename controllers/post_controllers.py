@@ -28,7 +28,8 @@ def api_post_create(user_from_token):
         for category in categories_list:
             post_object_from_request.categories.append(category)
         # print(post_object_from_request.categories)
-        # db.session.add(post_object_from_request)
+        local_object = db.session.merge(post_object_from_request)
+        db.session.add(local_object)
         db.session.commit()
         return {"post": post_schema.dump(post_object_from_request)}, 201
 
