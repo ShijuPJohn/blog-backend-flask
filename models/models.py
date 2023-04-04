@@ -24,7 +24,6 @@ post_categories = db.Table("post_categories",
                            )
 
 
-
 class User(db.Model):
     __tablename__ = "user1"
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
@@ -44,11 +43,6 @@ class User(db.Model):
     liked_posts = db.relationship("Post", secondary=post_likes, backref="liked_users")
     liked_comments = db.relationship("Comment", secondary=comment_likes, backref="liked_users")
 
-    def __init__(self, username, email, password):
-        self.username = username
-        self.email = email
-        self.password = password
-
     def __str__(self):
         return "User object" + self.email
 
@@ -67,8 +61,8 @@ class Comment(db.Model):
 
 class Post(db.Model):
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    title = db.Column(db.String, nullable=False)
-    seo_slug = db.Column(db.String, nullable=True)
+    title = db.Column(db.String, nullable=False, unique=True)
+    seo_slug = db.Column(db.String, unique=True)
     description = db.Column(db.String, nullable=True)
     cover_image = db.Column(db.String, nullable=True)  # TODO default=?
     cover_video = db.Column(db.String, nullable=True)

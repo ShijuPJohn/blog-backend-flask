@@ -3,7 +3,7 @@ from marshmallow import post_load
 from marshmallow_sqlalchemy import fields
 
 from models.models import Post, Category
-from serializers.user_serializers import UserDisplaySchema, user_display_schema, user_minimal_display_schema
+from serializers.user_serializers import user_display_schema, user_minimal_display_schema
 
 ma = Marshmallow()
 
@@ -33,7 +33,7 @@ class PostSchema(ma.Schema):
         model = Post
         fields = (
             "id", "title", "description", "cover_image", "time_created", "author", "archived", "draft", "categories",
-            "author")
+            "author", "seo_slug")
 
     author = fields.Nested(user_display_schema)
     categories = fields.Nested(categories_minimal_schema)
@@ -53,7 +53,9 @@ class PostCreateSchema(ma.Schema):
 class PostDisplaySchema(ma.Schema):
     class Meta:
         model = Post
-        fields = ("title", "description", "author", "archived", "cover_image", "draft", "categories")
+        fields = (
+            "id", "title", "description", "author", "archived", "cover_image", "draft", "categories", "time_created",
+            "seo_slug")
 
     author = fields.Nested(user_display_schema)
     categories = fields.Nested(categories_minimal_schema)
@@ -69,9 +71,17 @@ class CategoryCreateSchema(ma.Schema):
         return Category(**data)
 
 
+class CategoryMinimalDisplaySchema(ma.Schema):
+    class Meta:
+        model = Category
+        fields = ("name", "id")
+
+
 post_schema = PostSchema()
 posts_schema = PostSchema(many=True)
 posts_display_schema = PostDisplaySchema(many=True)
+post_display_schema = PostDisplaySchema()
 post_create_schema = PostCreateSchema()
 category_schema = CategorySchema()
 category_create_schema = CategoryCreateSchema()
+categories_minimal_display_schema = CategoryMinimalDisplaySchema(many=True)

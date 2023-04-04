@@ -65,7 +65,7 @@ def api_user_login():
                      "exp": datetime.datetime.utcnow() + datetime.timedelta(days=30)},
                     config.secret_key
                 )
-                return jsonify({"message": "login_success", "token": token}), 200
+                return jsonify({"user": user_display_schema.dump(user), "token": token}), 200
             return {"message": "invalid_credentials"}, 401
         return {"message": "invalid_data"}, 400
     except Exception as e:
