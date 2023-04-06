@@ -73,6 +73,7 @@ class Post(db.Model):
     archived = db.Column(db.Boolean, default=False, nullable=False)
     draft = db.Column(db.Boolean, default=False, nullable=False)
     categories = db.relationship("Category", secondary=post_categories, backref="posts")
+    content_blocks = db.relationship("PostContentBlock", backref="Post", order_by='PostContentBlock.time_created.asc()')
 
     def __str__(self):
         return "Post with title : " + self.title
@@ -86,3 +87,12 @@ class Category(db.Model):
 
     def __str__(self):
         return "Category with name : " + self.name
+
+
+class PostContentBlock(db.Model):
+    __tablename__ = "post_content_block"
+    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    type = db.Column(db.String, nullable=False)
+    content = db.Column(db.String, nullable=False)
+    time_created = db.Column(DateTime(timezone=True), server_default=func.now())
+    post_id = db.Column(db.Integer, db.ForeignKey("post.id"), nullable=True)

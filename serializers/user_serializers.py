@@ -1,5 +1,6 @@
 from flask_marshmallow import Marshmallow
-from marshmallow import post_load, Schema
+from marshmallow import post_load
+
 from models.models import User
 
 ma = Marshmallow()
@@ -31,6 +32,9 @@ class UserSignupSchema(ma.Schema):
     @post_load
     def make_user(self, data, **kwargs):
         return User(**data)
+
+
+
 
 
 user_schema = UserSchema()

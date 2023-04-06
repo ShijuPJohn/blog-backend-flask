@@ -9,7 +9,8 @@ from marshmallow import ValidationError
 from controllers.token_validator import validate_token
 from models.models import Post, Category
 from serializers.post_serializers import post_create_schema, post_schema, posts_display_schema, category_schema, \
-    category_create_schema, post_display_schema, categories_minimal_display_schema
+    category_create_schema, post_display_schema, categories_minimal_display_schema, post_content_block_create_schema, \
+    post_content_block_display_schema
 
 post_controller = Blueprint('post_controller', __name__)
 
@@ -93,7 +94,7 @@ def api_post_update_pic(user_from_token):
         client = storage.Client()
         bucket = client.get_bucket('blog-storage1')
         uid = uuid.uuid4()
-        blob = bucket.blob(f'{str(uid)[:8]}/{file.name}')
+        blob = bucket.blob(f'{str(uid)[:8]}/{file.filename}')
         blob.upload_from_file(file)
         public_url = blob.public_url
         return jsonify({"message": "file_saved", "url": public_url}), 201
@@ -134,4 +135,24 @@ def api_categories_get(user_from_token):
         return categories_minimal_display_schema.dump(categories), 200
     except Exception as e:
         print(e)
+        return jsonify({"message": "error"}), 500
+
+
+@post_controller.route("/api/post_content_block", methods=["POST"])
+@validate_token
+def api_post_content_block_create(user_from_token):
+    try:
+        request_data = request.json
+        print(request_data)
+        post_content_block_object_from_request = post_content_block_create_schema.load(request_data)
+        print(post_content_block_object_from_request.content)
+        db.session.add(post_content_block_object_from_request)
+        db.session.commit()
+        return post_content_block_display_schema.dump(post_content_block_object_from_request), 201
+
+    except ValidationError as v:
+        print(v)
+        return jsonify({"message": "bad_request"}), 400
+    except Exception as e:
+        print("Exception", e)
         return jsonify({"message": "error"}), 500
