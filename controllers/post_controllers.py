@@ -9,8 +9,7 @@ from marshmallow import ValidationError
 from controllers.token_validator import validate_token
 from models.models import Post, Category
 from serializers.post_serializers import post_create_schema, post_schema, posts_display_schema, category_schema, \
-    category_create_schema, post_display_schema, categories_minimal_display_schema, post_content_block_create_schema, \
-    post_content_block_display_schema
+    category_create_schema, post_display_schema, categories_minimal_display_schema
 
 post_controller = Blueprint('post_controller', __name__)
 
@@ -41,7 +40,7 @@ def api_post_create(user_from_token):
         local_object = db.session.merge(post_object_from_request)
         db.session.add(local_object)
         db.session.commit()
-        return {"post": post_schema.dump(post_object_from_request)}, 201
+        return {"post": post_schema.dump(local_object)}, 201
 
     except ValidationError as v:
         print(v)
@@ -56,7 +55,75 @@ def api_post_create(user_from_token):
 def api_posts_get():
     try:
         posts = Post.query.all()
+        # for post in posts:
+        #     post.description=post.description[:100]
         return posts_display_schema.dump(posts), 200
+    except Exception as e:
+        print(e)
+        return jsonify({"message": "error"}), 500
+
+
+@post_controller.route("/api/user/posts", methods=["GET"])
+@validate_token
+@cross_origin()
+def api_posts_by_user(user_from_token):
+    try:
+        posts = Post.query.filter(Post.author == user_from_token).all()
+        return posts_display_schema.dump(posts), 200
+    except Exception as e:
+        print(e)
+        return jsonify({"message": "error"}), 500
+
+
+@post_controller.route("/api/posts/<pid>", methods=["PUT"])
+@validate_token
+@cross_origin()
+def api_post_update(pid, user_from_token):
+    try:
+        data_from_request = request.json
+        post = Post.query.filter(Post.id == int(pid)).first()
+        current_db_session = db.session.object_session(post)
+        if post.author == user_from_token:
+            if "title" in data_from_request.keys():
+                post.title = data_from_request["title"]
+            if "description" in data_from_request.keys():
+                post.description = data_from_request["description"]
+            if "seo_slug" in data_from_request.keys():
+                post.seo_slug = data_from_request["seo_slug"]
+            if "draft" in data_from_request.keys():
+                post.draft = data_from_request["draft"]
+            if "archived" in data_from_request.keys():
+                post.archived = data_from_request["archived"]
+            if "cover_image" in data_from_request.keys():
+                post.cover_image = data_from_request["cover_image"]
+            if "categories" in data_from_request.keys():
+                categories_from_request = data_from_request["categories"]
+                post.categories.clear()
+                categories_list = Category.query.filter(Category.id.in_(categories_from_request)).all()
+                post.categories += categories_list
+            current_db_session.add(post)
+            current_db_session.commit()
+            return {"message": "post_updated", "post": post_schema.dump(post)}, 201
+        return jsonify({"message": "unauthorized"}), 401
+    except Exception as e:
+        print(e)
+        return {"message": "error"}, 500
+
+
+@post_controller.route("/api/posts/<pid>", methods=["DELETE"])
+@validate_token
+@cross_origin()
+def api_posts_delete(user_from_token, pid):
+    try:
+        post = Post.query.filter(Post.id == pid).first()
+        if not post:
+            return jsonify({"message": "not_found"}), 404
+        if post.author == user_from_token:
+            local_object = db.session.merge(post)
+            db.session.delete(local_object)
+            db.session.commit()
+            return jsonify({"message": "deleted"}), 200
+        return jsonify({"message": "unauthorized"}), 401
     except Exception as e:
         print(e)
         return jsonify({"message": "error"}), 500
@@ -67,7 +134,9 @@ def api_posts_get():
 def api_post_get(pid):
     try:
         post = Post.query.filter(Post.id == pid).first()
-        return post_display_schema.dump(post), 200
+        if post:
+            return post_display_schema.dump(post), 200
+        return jsonify({"message": "not_found"}), 404
     except Exception as e:
         print(e)
         return jsonify({"message": "error"}), 500
@@ -88,6 +157,7 @@ def api_post_getbyslug(slug):
 
 @post_controller.route("/api/post/image-upload", methods=["POST"])
 @validate_token
+@cross_origin()
 def api_post_update_pic(user_from_token):
     try:
         file = request.files["file"]
@@ -111,10 +181,8 @@ def api_post_update_pic(user_from_token):
 def api_category_create(user_from_token):
     try:
         request_data = request.json
-        print(request_data)
         request_data["author_id"] = user_from_token.id
         category_object_from_request = category_create_schema.load(request_data)
-        print(category_object_from_request)
         db.session.add(category_object_from_request)
         db.session.commit()
         return {"category": category_schema.dump(category_object_from_request)}, 201
@@ -135,24 +203,4 @@ def api_categories_get(user_from_token):
         return categories_minimal_display_schema.dump(categories), 200
     except Exception as e:
         print(e)
-        return jsonify({"message": "error"}), 500
-
-
-@post_controller.route("/api/post_content_block", methods=["POST"])
-@validate_token
-def api_post_content_block_create(user_from_token):
-    try:
-        request_data = request.json
-        print(request_data)
-        post_content_block_object_from_request = post_content_block_create_schema.load(request_data)
-        print(post_content_block_object_from_request.content)
-        db.session.add(post_content_block_object_from_request)
-        db.session.commit()
-        return post_content_block_display_schema.dump(post_content_block_object_from_request), 201
-
-    except ValidationError as v:
-        print(v)
-        return jsonify({"message": "bad_request"}), 400
-    except Exception as e:
-        print("Exception", e)
         return jsonify({"message": "error"}), 500

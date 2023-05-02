@@ -8,7 +8,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 import config
 from controllers.token_validator import validate_token
-# from controllers.token_validator import validate_token
 from models.models import User
 from serializers.user_serializers import users_display_schema, user_signup_schema, user_display_schema
 
@@ -32,6 +31,7 @@ def api_users_get():
 def api_user_signup():
     try:
         user_from_request = request.json
+        print("Signing up, data from request", user_from_request)
         user = user_signup_schema.load(user_from_request)
         if user:
             hashed_password = generate_password_hash(user.password, method="sha256")
@@ -40,6 +40,8 @@ def api_user_signup():
             db.session.commit()
             token = jwt.encode(
                 {"user_id": user.id,
+                 "username": user.username,
+                 "email": user.email,
                  "exp": datetime.datetime.utcnow() + datetime.timedelta(days=30)},
                 config.secret_key
             )
@@ -62,6 +64,8 @@ def api_user_login():
             if user and check_password_hash(user.password, password_from_request):
                 token = jwt.encode(
                     {"user_id": user.id,
+                     "username": user.username,
+                     "email": user.email,
                      "exp": datetime.datetime.utcnow() + datetime.timedelta(days=30)},
                     config.secret_key
                 )

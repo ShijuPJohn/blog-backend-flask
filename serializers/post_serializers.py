@@ -2,7 +2,7 @@ from flask_marshmallow import Marshmallow
 from marshmallow import post_load
 from marshmallow_sqlalchemy import fields
 
-from models.models import Post, Category, PostContentBlock
+from models.models import Post, Category
 from serializers.user_serializers import user_display_schema, user_minimal_display_schema
 
 ma = Marshmallow()
@@ -61,6 +61,17 @@ class PostDisplaySchema(ma.Schema):
     categories = fields.Nested(categories_minimal_schema)
 
 
+class PostMinimalDisplaySchema(ma.Schema):
+    class Meta:
+        model = Post
+        fields = (
+            "id", "title", "description", "author", "archived", "cover_image", "draft", "categories", "time_created",
+            "seo_slug")
+
+    author = fields.Nested(user_display_schema)
+    categories = fields.Nested(categories_minimal_schema)
+
+
 class CategoryCreateSchema(ma.Schema):
     class Meta:
         model = Category
@@ -77,22 +88,6 @@ class CategoryMinimalDisplaySchema(ma.Schema):
         fields = ("name", "id")
 
 
-class PostContentBlockCreateSchema(ma.Schema):
-    class Meta:
-        model = PostContentBlock
-        fields = ("type", "content", "post_id")
-
-    @post_load
-    def make_user(self, data, **kwargs):
-        return PostContentBlock(**data)
-
-
-class PostContentBlockDisplaySchema(ma.Schema):
-    class Meta:
-        model = PostContentBlock
-        fields = ("id", "type", "content")
-
-
 post_schema = PostSchema()
 posts_schema = PostSchema(many=True)
 posts_display_schema = PostDisplaySchema(many=True)
@@ -101,6 +96,3 @@ post_create_schema = PostCreateSchema()
 category_schema = CategorySchema()
 category_create_schema = CategoryCreateSchema()
 categories_minimal_display_schema = CategoryMinimalDisplaySchema(many=True)
-post_content_block_create_schema = PostContentBlockCreateSchema()
-post_content_block_display_schema = PostContentBlockDisplaySchema()
-post_content_blocks_display_schema = PostContentBlockDisplaySchema(many=True)
