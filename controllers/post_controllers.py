@@ -54,7 +54,8 @@ def api_post_create(user_from_token):
 @cross_origin()
 def api_posts_get():
     try:
-        posts = Post.query.all()
+        # posts = Post.query.all()
+        posts = Post.query.filter(Post.draft == False).all()
         # for post in posts:
         #     post.description=post.description[:100]
         return posts_display_schema.dump(posts), 200
