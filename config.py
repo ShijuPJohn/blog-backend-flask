@@ -29,5 +29,4 @@ def getconn():
 
 
 def get_secret():
-    # return app_secret
-    pass
+    return secret_key

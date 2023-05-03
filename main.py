@@ -3,7 +3,7 @@ import os
 from flask import Flask
 from flask_cors import CORS
 
-from config import getconn
+from config import getconn, get_secret
 from controllers.post_controllers import post_controller
 from controllers.user_controllers import user_controller
 from models.models import db
@@ -24,7 +24,7 @@ app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
 }
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = os.getenv('app_secret')
+app.config['SECRET_KEY'] = get_secret()
 db.init_app(app)
 
 # db.create_all()
