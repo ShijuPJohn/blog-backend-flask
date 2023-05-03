@@ -4,7 +4,6 @@
 
 #token
 token.json
-token*
 key.json
 
 # Created by https://www.toptal.com/developers/gitignore/api/django
