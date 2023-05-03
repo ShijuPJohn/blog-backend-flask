@@ -3,14 +3,17 @@ from flask import request, jsonify, Blueprint
 
 from models.models import User
 from flask import current_app as app
+
+
 # token_validator = Blueprint('token_validator', __name__)
 
 
 def validate_token(func):
     def w_func(*args, **kwargs):
         token = None
-        if "x-token" in request.headers:
-            token = request.headers["x-token"]
+        if "Authorization" in request.headers:
+            token_string = request.headers["Authorization"]
+            token = token_string.split()[1]
         if not token:
             return jsonify({"message": "token_absent"}), 401
         try:
