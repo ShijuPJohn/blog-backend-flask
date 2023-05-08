@@ -33,6 +33,8 @@ def api_post_create(user_from_token):
                 if ch == ' ':
                     seo_slug += '-'
             request_data["seo_slug"] = seo_slug
+        if not request_data["meta_description"]:
+            request_data["meta_description"] = request_data["description"][:100]
         post_object_from_request = post_create_schema.load(request_data)
         categories_list = Category.query.filter(Category.id.in_(categories_from_request)).all()
         for category in categories_list:
@@ -102,6 +104,8 @@ def api_post_update(pid, user_from_token):
                 post.categories.clear()
                 categories_list = Category.query.filter(Category.id.in_(categories_from_request)).all()
                 post.categories += categories_list
+            if "meta_description" in data_from_request.keys():
+                post.meta_description = data_from_request["meta_description"]
             current_db_session.add(post)
             current_db_session.commit()
             return {"message": "post_updated", "post": post_schema.dump(post)}, 201
@@ -119,6 +123,8 @@ def api_posts_delete(user_from_token, pid):
         post = Post.query.filter(Post.id == pid).first()
         if not post:
             return jsonify({"message": "not_found"}), 404
+        print(post.author)
+        print(user_from_token)
         if post.author == user_from_token:
             local_object = db.session.merge(post)
             db.session.delete(local_object)
