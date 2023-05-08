@@ -54,6 +54,7 @@ class Comment(db.Model):
     post_id = db.Column(db.Integer, db.ForeignKey("post.id"), nullable=False)
     time_created = db.Column(DateTime(timezone=True), server_default=func.now())
     time_updated = db.Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.current_timestamp())
+    guest_likes = db.Column(db.Integer, default=0)
 
     def __str__(self):
         return "Comment with content: " + self.comment
@@ -64,6 +65,7 @@ class Post(db.Model):
     title = db.Column(db.String, nullable=False, unique=True)
     seo_slug = db.Column(db.String, unique=True)
     description = db.Column(db.String, nullable=True)
+    meta_description = db.Column(db.String, nullable=True)
     cover_image = db.Column(db.String, nullable=True)  # TODO default=?
     cover_video = db.Column(db.String, nullable=True)
     time_created = db.Column(DateTime(timezone=True), server_default=func.now())
@@ -73,6 +75,7 @@ class Post(db.Model):
     archived = db.Column(db.Boolean, default=False, nullable=False)
     draft = db.Column(db.Boolean, default=False, nullable=False)
     categories = db.relationship("Category", secondary=post_categories, backref="posts")
+    guest_likes = db.Column(db.Integer, default=0)
 
     def __str__(self):
         return "Post with title : " + self.title
