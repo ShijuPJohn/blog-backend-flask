@@ -35,6 +35,10 @@ def api_post_create(user_from_token):
             request_data["seo_slug"] = seo_slug
         if not request_data["meta_description"]:
             request_data["meta_description"] = request_data["description"][:100]
+        if user_from_token.admin:
+            request_data["approved"] = True
+        else:
+            request_data["approved"] = False
         post_object_from_request = post_create_schema.load(request_data)
         categories_list = Category.query.filter(Category.id.in_(categories_from_request)).all()
         for category in categories_list:
@@ -42,7 +46,9 @@ def api_post_create(user_from_token):
         local_object = db.session.merge(post_object_from_request)
         db.session.add(local_object)
         db.session.commit()
-        return {"post": post_schema.dump(local_object)}, 201
+        if user_from_token.admin:
+            return {"message": "approved", "post": post_schema.dump(local_object)}, 201
+        return {"message": "approval_pending", "post": post_schema.dump(local_object)}, 201
 
     except ValidationError as v:
         print(v)
@@ -57,7 +63,7 @@ def api_post_create(user_from_token):
 def api_posts_get():
     try:
         # posts = Post.query.all()
-        posts = Post.query.filter(Post.draft == False).all()
+        posts = Post.query.filter(Post.draft == False, Post.approved == True).all()
         # for post in posts:
         #     post.description=post.description[:100]
         return posts_display_schema.dump(posts), 200

@@ -34,7 +34,7 @@ class PostSchema(ma.Schema):
         fields = (
             "id", "title", "meta_description", "description", "cover_image", "time_created", "author", "archived",
             "draft", "categories",
-            "author", "seo_slug")
+            "author", "seo_slug", "approved")
 
     author = fields.Nested(user_display_schema)
     categories = fields.Nested(categories_minimal_schema)
@@ -45,7 +45,8 @@ class PostCreateSchema(ma.Schema):
     class Meta:
         model = Post
         fields = (
-        "title", "meta_description", "description", "author_id", "archived", "seo_slug", "cover_image", "draft")
+            "title", "meta_description", "approved", "description", "author_id", "archived", "seo_slug", "cover_image",
+            "draft", "approved")
 
     @post_load
     def make_post(self, data, **kwargs):
@@ -57,7 +58,7 @@ class PostDisplaySchema(ma.Schema):
         model = Post
         fields = (
             "id", "title", "meta_description", "description", "author", "archived", "cover_image", "draft",
-            "categories", "time_created",
+            "categories", "time_created", "approved",
             "seo_slug")
 
     author = fields.Nested(user_display_schema)
@@ -70,7 +71,7 @@ class PostMinimalDisplaySchema(ma.Schema):
         fields = (
             "id", "title", "meta_description", "description", "author", "archived", "cover_image", "draft",
             "categories", "time_created",
-            "seo_slug")
+            "seo_slug", "approved")
 
     author = fields.Nested(user_display_schema)
     categories = fields.Nested(categories_minimal_schema)
