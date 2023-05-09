@@ -73,6 +73,7 @@ class Post(db.Model):
     author_id = db.Column(db.Integer, db.ForeignKey("user1.id"), nullable=False)
     comments = db.relationship("Comment", cascade="all,delete", backref="Post", order_by='Comment.time_created.desc()')
     archived = db.Column(db.Boolean, default=False, nullable=False)
+    approved = db.Column(db.Boolean, default=False, nullable=False)
     draft = db.Column(db.Boolean, default=False, nullable=False)
     categories = db.relationship("Category", secondary=post_categories, backref="posts")
     guest_likes = db.Column(db.Integer, default=0)
