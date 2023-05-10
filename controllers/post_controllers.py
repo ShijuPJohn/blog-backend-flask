@@ -129,8 +129,6 @@ def api_posts_delete(user_from_token, pid):
         post = Post.query.filter(Post.id == pid).first()
         if not post:
             return jsonify({"message": "not_found"}), 404
-        print(post.author)
-        print(user_from_token)
         if post.author == user_from_token:
             local_object = db.session.merge(post)
             db.session.delete(local_object)

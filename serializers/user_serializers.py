@@ -15,7 +15,7 @@ class UserSchema(ma.Schema):
 class UserMinimalDisplaySchema(ma.Schema):
     class Meta:
         model = User
-        fields = ("id", "username", "email")
+        fields = ("id", "username", "email","profile_image")
 
 
 class UserDisplaySchema(ma.Schema):

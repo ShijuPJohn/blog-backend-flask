@@ -31,7 +31,6 @@ def api_users_get():
 def api_user_signup():
     try:
         user_from_request = request.json
-        print("Signing up, data from request", user_from_request)
         user = user_signup_schema.load(user_from_request)
         if user:
             hashed_password = generate_password_hash(user.password, method="sha256")
@@ -85,6 +84,32 @@ def api_user_get(uid, user_from_token):
         return user_display_schema.jsonify(requested_user)
     return {"status": "not_found"}, 404
 
+
+@user_controller.route('/api/user/<uid>', methods=["PUT"])
+@validate_token
+def api_user_update(uid, user_from_token):
+    try:
+        data_from_request = request.json
+        if user_from_token.id == uid:
+            user = User.query.filter(User.id == int(uid)).first()
+            current_db_session = db.session.object_session(user)
+            if "username" in data_from_request.keys():
+                user.username = data_from_request["username"]
+            if "profile_image" in data_from_request.keys():
+                user.profile_image = data_from_request["profile_image"]
+            if "github_url" in data_from_request.keys():
+                user.github_url = data_from_request["github_url"]
+            if "linkedin_url" in data_from_request.keys():
+                user.linkedin_url = data_from_request["linkedin_url"]
+            if "portfolio_url" in data_from_request.keys():
+                user.portfolio_url = data_from_request["portfolio_url"]
+            current_db_session.add(user)
+            current_db_session.commit()
+            return {"message": "user_updated", "post": user_display_schema.dump(user)}, 201
+        return jsonify({"message": "unauthorized"}), 401
+    except Exception as e:
+        print(e)
+        return {"message": "error"}, 500
 # @app.route("/api/user", methods=["PUT"])
 # @validate_token
 # def api_user_update(user_from_token):
