@@ -90,7 +90,7 @@ def api_user_get(uid, user_from_token):
 def api_user_update(uid, user_from_token):
     try:
         data_from_request = request.json
-        if user_from_token.id == uid:
+        if user_from_token.id == int(uid):
             user = User.query.filter(User.id == int(uid)).first()
             current_db_session = db.session.object_session(user)
             if "username" in data_from_request.keys():

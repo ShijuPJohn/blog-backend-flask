@@ -15,13 +15,13 @@ class UserSchema(ma.Schema):
 class UserMinimalDisplaySchema(ma.Schema):
     class Meta:
         model = User
-        fields = ("id", "username", "email","profile_image")
+        fields = ("id", "username", "email", "profile_image")
 
 
 class UserDisplaySchema(ma.Schema):
     class Meta:
         model = User
-        fields = ("id", "username", "email", "profile_image", "admin")
+        fields = ("id", "username", "email", "profile_image", "admin", "linkedin_url", "github_url", "portfolio_url")
 
 
 class UserSignupSchema(ma.Schema):
@@ -32,9 +32,6 @@ class UserSignupSchema(ma.Schema):
     @post_load
     def make_user(self, data, **kwargs):
         return User(**data)
-
-
-
 
 
 user_schema = UserSchema()
