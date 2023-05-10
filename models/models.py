@@ -42,6 +42,7 @@ class User(db.Model):
     comments = db.relationship("Comment", cascade="all,delete", backref="author")
     liked_posts = db.relationship("Post", secondary=post_likes, backref="liked_users")
     liked_comments = db.relationship("Comment", secondary=comment_likes, backref="liked_users")
+    about = db.Column(db.String, nullable=True, default='')
     linkedin_url = db.Column(db.String, nullable=True, default='')
     github_url = db.Column(db.String, nullable=True, default='')
     portfolio_url = db.Column(db.String, nullable=True, default='')

@@ -103,6 +103,8 @@ def api_user_update(uid, user_from_token):
                 user.linkedin_url = data_from_request["linkedin_url"]
             if "portfolio_url" in data_from_request.keys():
                 user.portfolio_url = data_from_request["portfolio_url"]
+            if "about" in data_from_request.keys():
+                user.about = data_from_request["about"]
             current_db_session.add(user)
             current_db_session.commit()
             return {"message": "user_updated", "post": user_display_schema.dump(user)}, 201
