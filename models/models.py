@@ -17,6 +17,10 @@ comment_likes = db.Table("comment_likes",
                          db.Column("post_id", db.Integer, db.ForeignKey("comment.id")),
                          db.Column("user_id", db.Integer, db.ForeignKey("user1.id"))
                          )
+guest_comment_likes = db.Table("guest_comment_likes",
+                               db.Column("post_id", db.Integer, db.ForeignKey("guest_comment.id")),
+                               db.Column("user_id", db.Integer, db.ForeignKey("user1.id"))
+                               )
 
 post_categories = db.Table("post_categories",
                            db.Column("post_id", db.Integer, db.ForeignKey("post.id")),
@@ -42,6 +46,7 @@ class User(db.Model):
     comments = db.relationship("Comment", cascade="all,delete", backref="author")
     liked_posts = db.relationship("Post", secondary=post_likes, backref="liked_users")
     liked_comments = db.relationship("Comment", secondary=comment_likes, backref="liked_users")
+    liked_guest_comments = db.relationship("GuestComment", secondary=guest_comment_likes, backref="liked_users")
     about = db.Column(db.String, nullable=True, default='')
     linkedin_url = db.Column(db.String, nullable=True, default='')
     github_url = db.Column(db.String, nullable=True, default='')
@@ -64,6 +69,21 @@ class Comment(db.Model):
         return "Comment with content: " + self.comment
 
 
+class GuestComment(db.Model):
+    __tablename__ = "guest_comment"
+    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    comment = db.Column(db.String, nullable=False)
+    author_name = db.Column(db.String, nullable=False)
+    author_email = db.Column(db.String, nullable=False)
+    post_id = db.Column(db.Integer, db.ForeignKey("post.id"), nullable=False)
+    time_created = db.Column(DateTime(timezone=True), server_default=func.now())
+    time_updated = db.Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.current_timestamp())
+    guest_likes = db.Column(db.Integer, default=0)
+
+    def __str__(self):
+        return "Guest comment with content: " + self.comment
+
+
 class Post(db.Model):
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     title = db.Column(db.String, nullable=False, unique=True)
@@ -76,6 +96,8 @@ class Post(db.Model):
     time_updated = db.Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.current_timestamp())
     author_id = db.Column(db.Integer, db.ForeignKey("user1.id"), nullable=False)
     comments = db.relationship("Comment", cascade="all,delete", backref="Post", order_by='Comment.time_created.desc()')
+    guest_comments = db.relationship("GuestComment", cascade="all,delete", backref="Post",
+                                     order_by='GuestComment.time_created.desc()')
     archived = db.Column(db.Boolean, default=False, nullable=False)
     approved = db.Column(db.Boolean, default=False, nullable=False)
     draft = db.Column(db.Boolean, default=False, nullable=False)
