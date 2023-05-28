@@ -116,3 +116,25 @@ class Category(db.Model):
 
     def __str__(self):
         return "Category with name : " + self.name
+
+
+class BlogMessage(db.Model):
+    __tablename__ = "blog_message"
+    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    name = db.Column(db.String, nullable=False)
+    email = db.Column(db.String, nullable=False)
+    message = db.Column(db.String, nullable=False)
+
+    def __str__(self):
+        return "Blog Contact Message with name : " + self.name
+
+
+class PortfolioMessage(db.Model):
+    __tablename__ = "portfolio_message"
+    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    name = db.Column(db.String, nullable=False)
+    email = db.Column(db.String, nullable=False)
+    message = db.Column(db.String, nullable=False)
+
+    def __str__(self):
+        return "Portfolio Contact Message with name : " + self.name
