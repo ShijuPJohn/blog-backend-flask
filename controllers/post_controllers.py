@@ -214,4 +214,4 @@ def api_categories_get(user_from_token):
         return categories_minimal_display_schema.dump(categories), 200
     except Exception as e:
         print(e)
-        return jsonify({"message": "error"}), 500
+        return jsonify({"message": "error1"}), 500
