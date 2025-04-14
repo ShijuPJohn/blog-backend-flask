@@ -1,32 +1,46 @@
 name: CI
 
 on:
-    push:
-      branches:
-        - master
+  push:
+    branches:
+      - master
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-      
-    - name: Build Docker image
-      run: docker build . --tag gcr.io/${{ secrets.GCLOUD_PROJECT }}/${{ secrets.GCLOUD_APP_NAME }}
-    - name: Authenticate into Google Cloud Platform
-      uses: google-github-actions/setup-gcloud@v0.6.0
-      with:
-        service_account_email: ${{ secrets.GCLOUD_EMAIL }}
-        service_account_key: ${{ secrets.GCLOUD_AUTH }}
+      - uses: actions/checkout@v2
 
-    - name: Configure Docker to use Google Cloud Platform
-      run: "gcloud auth configure-docker --quiet"
+      - name: Authenticate with Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: '${{ secrets.GCLOUD_AUTH }}'
 
-    - name: Push image to Google Cloud Container Registry
-      run: docker push gcr.io/${{ secrets.GCLOUD_PROJECT }}/${{ secrets.GCLOUD_APP_NAME }}
+      - name: Set up gcloud
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          project_id: ${{ secrets.GCLOUD_PROJECT }}
+          install_components: 'beta'
 
-    - name: Install beta commands and deploy on cloud run
-      run: |
-          gcloud components install beta --quiet
-          gcloud beta run deploy ${{ secrets.GCLOUD_APP_NAME }} --quiet --image gcr.io/${{ secrets.GCLOUD_PROJECT }}/${{ secrets.GCLOUD_APP_NAME }} --project ${{ secrets.GCLOUD_PROJECT }} --region us-central1 --platform managed
+      - name: Configure Docker for Artifact Registry
+        run: |
+          gcloud auth configure-docker ${{ secrets.GCLOUD_ARTIFACT_REGION }}-docker.pkg.dev
+
+      - name: Build Docker image
+        run: |
+          docker build . -t ${{ secrets.GCLOUD_ARTIFACT_REGION }}-docker.pkg.dev/${{ secrets.GCLOUD_PROJECT }}/${{ secrets.GCLOUD_REPO }}/${{ secrets.GCLOUD_APP_NAME }}
+
+      - name: Push to Artifact Registry
+        run: |
+          docker push ${{ secrets.GCLOUD_ARTIFACT_REGION }}-docker.pkg.dev/${{ secrets.GCLOUD_PROJECT }}/${{ secrets.GCLOUD_REPO }}/${{ secrets.GCLOUD_APP_NAME }}
+
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud beta run deploy ${{ secrets.GCLOUD_APP_NAME }} \
+            --image ${{ secrets.GCLOUD_ARTIFACT_REGION }}-docker.pkg.dev/${{ secrets.GCLOUD_PROJECT }}/${{ secrets.GCLOUD_REPO }}/${{ secrets.GCLOUD_APP_NAME }} \
+            --region asia-southeast1 \
+            --platform managed \
+            --project ${{ secrets.GCLOUD_PROJECT }} \
+            --service-account ${{ secrets.GCLOUD_EMAIL }} \
+            --quiet
