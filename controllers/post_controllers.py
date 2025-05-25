@@ -13,7 +13,7 @@ from serializers.post_serializers import post_create_schema, post_schema, posts_
 
 post_controller = Blueprint('post_controller', __name__)
 
-db = SQLAlchemy()
+from models.models import db
 
 
 @post_controller.route("/api/post", methods=["POST"])
