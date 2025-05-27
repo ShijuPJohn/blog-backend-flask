@@ -12,7 +12,7 @@ from serializers.comment_serializers import guest_comment_schema, guest_comment_
 
 comment_controller = Blueprint('comment_controller', __name__)
 
-db = SQLAlchemy()
+from models.models import db
 
 
 @comment_controller.route("/api/comment", methods=["POST"])

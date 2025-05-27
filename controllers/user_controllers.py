@@ -11,7 +11,7 @@ from controllers.token_validator import validate_token
 from models.models import User
 from serializers.user_serializers import users_display_schema, user_signup_schema, user_display_schema
 
-db = SQLAlchemy()
+from models.models import db
 
 user_controller = Blueprint('user_controller', __name__)
 
@@ -33,7 +33,7 @@ def api_user_signup():
         user_from_request = request.json
         user = user_signup_schema.load(user_from_request)
         if user:
-            hashed_password = generate_password_hash(user.password, method="sha256")
+            hashed_password = generate_password_hash(user.password, method="pbkdf2:sha256")
             user.password = hashed_password
             db.session.add(user)
             db.session.commit()
